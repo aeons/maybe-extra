@@ -21,6 +21,7 @@ module Maybe.Extra
         , combineArray
         , filter
         , values
+        , cons
         )
 
 {-| Convenience functions for Maybe.
@@ -35,7 +36,7 @@ module Maybe.Extra
 @docs or, orLazy, orElseLazy, orElse
 
 # List and array functions
-@docs toList, toArray, traverse, combine, traverseArray, combineArray, values
+@docs toList, toArray, traverse, combine, traverseArray, combineArray, values, cons
 -}
 
 import Array
@@ -344,14 +345,21 @@ from `Nothing`.
 -}
 values : List (Maybe a) -> List a
 values =
-    List.foldr foldrValues []
+    List.foldr cons []
 
 
-foldrValues : Maybe a -> List a -> List a
-foldrValues item list =
+
+{-| Add an item to a list only if its a `Just`, and return the list unaffected otherwise.
+
+    cons (Just 1) [ 2, 3 ] == [ 1, 2, 3 ]
+    cons Nothing [ 2, 3 ] == [ 2, 3 ]
+
+-}
+cons : Maybe a -> List a -> List a
+cons item list =
     case item of
-        Nothing ->
-            list
-
         Just v ->
             v :: list
+
+        Nothing ->
+            list
